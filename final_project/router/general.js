@@ -8,7 +8,7 @@ const public_users = express.Router();
 public_users.post("/register", (req,res) => {
   const Username = req.body.username;
   const Password = req.body.password;
-  if(Username.length == 0 || Password.length == 0){
+  if(!Username || !Password){
     return res.status(404).json({message: "Invalid: username or password not provided"});
   }else{
     let user = users.filter((user)=>(

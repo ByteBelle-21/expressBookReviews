@@ -2,8 +2,10 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 const regd_users = express.Router();
+const session = require('express-session');
 
 let users = [];
+
 
 const isValid = (username)=>{ 
     const User = users.filter((user)=>(
@@ -28,7 +30,6 @@ const authenticatedUser = (username,password)=>{
     return false;
 }
 
-
 //only registered users can login
 regd_users.post("/login", (req,res) => {
     const Username = req.body.username;
@@ -42,9 +43,15 @@ regd_users.post("/login", (req,res) => {
             }, 'access', { expiresIn: 60 * 60 });
 
             req.session.authorization = {
-                accessToken, Username
+               accessToken, Username
             }
-            return res.status(200).send("User successfully logged in");
+            console.log(accessToken);
+            req.session.save((err) => {
+                if (err) {
+                    return res.status(500).json({ message: "Internal server error" });
+                }
+                return res.status(200).send(JSON.stringify(req.session.authorization));
+            });
         } else {
             return res.status(208).json({ message: "Invalid Login. Check username and password" });
         }
@@ -53,7 +60,7 @@ regd_users.post("/login", (req,res) => {
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
+  
   return res.status(300).json({message: "Yet to be implemented"});
 });
 
