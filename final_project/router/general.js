@@ -25,7 +25,7 @@ public_users.get('/isbn/:isbn',function (req, res) {
     if(books[ISBN]){
         return res.send(JSON.stringify(books[ISBN]))
     }else{
-        return res.status(300).json({message: "Book doen't exists with given ISBN"})
+        return res.status(300).json({message: "Book doesn't exists with given ISBN"})
     }
    
  });
@@ -39,7 +39,7 @@ public_users.get('/author/:author',function (req, res) {
     if(book.length>0){
         return res.send(JSON.stringify(book))
     }else{
-        return res.status(300).json({message: "Book doen't exists with given author"})
+        return res.status(300).json({message: "Book doesn't exists with given author"})
     } 
 });
 
@@ -52,14 +52,23 @@ public_users.get('/title/:title',function (req, res) {
     if(book.length>0){
         return res.send(JSON.stringify(book))
     }else{
-        return res.status(300).json({message: "Book doen't exists with given title"})
+        return res.status(300).json({message: "Book doesn't exists with given title"})
     }
 });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    let ISBN  = req.params.isbn;
+    if(books[ISBN]){
+        if(books[ISBN]["reviews"].length > 0){
+            return res.send(JSON.stringify(books[ISBN]))
+        }else{
+            return res.status(200).json({message: "Book doesn't have reviews available"})
+        }
+        
+    }else{
+        return res.status(300).json({message: "Book doesn't exists with given ISBN"})
+    }
 });
 
 module.exports.general = public_users;
