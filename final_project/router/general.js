@@ -26,49 +26,87 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-    let bookList = [];
-    Object.values(books).map((element)=>(
-    bookList.push(element["title"])
-  ))
-  return res.send(JSON.stringify(bookList));
+    let myPromise = new Promise((resolve,reject) => {
+        try{
+            let bookList = [];
+            Object.values(books).map((element)=>(
+                bookList.push(element["title"])
+            ))
+            resolve(bookList);
+        }catch(error){
+            reject("Error!")
+        } 
+    })
+    myPromise.then((bookList)=>{
+        return res.send(JSON.stringify(bookList));
+    })
+    
 });
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {
-    let ISBN  = req.params.isbn;
-    if(books[ISBN]){
-        return res.send(JSON.stringify(books[ISBN]))
-    }else{
-        return res.status(404).json({message: "Book doesn't exists with given ISBN"})
-    }
-   
+    let myPromise = new Promise((resolve,reject) => {
+        try{
+            let ISBN  = req.params.isbn;
+            const book = books[ISBN];
+            resolve(book);
+        }catch(error){
+            reject("Error occured")
+        } 
+    })
+    myPromise.then((book)=>{
+        if(book){
+            return res.send(JSON.stringify(book))
+        }else{
+            return res.status(404).json({message: "Book doesn't exists with given isbn"})
+        } 
+    })   
  });
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-    let Author  = req.params.author.replace(/[:\\"]/g,'');
-    let book =  Object.values(books).filter((element)=>(
-        element["author"]===Author
-    ))
-    if(book.length>0){
-        return res.send(JSON.stringify(book))
-    }else{
-        return res.status(404).json({message: "Book doesn't exists with given author"})
-    } 
+    let myPromise = new Promise((resolve,reject) => {
+        try{
+            let Author  = req.params.author.replace(/[:\\"]/g,'');
+            let book =  Object.values(books).filter((element)=>(
+                element["author"]===Author
+            ))
+            resolve(book);
+        }catch(error){
+            reject("Error occured")
+        } 
+    })
+    myPromise.then((book)=>{
+        if(book.length>0){
+            return res.send(JSON.stringify(book))
+        }else{
+            return res.status(404).json({message: "Book doesn't exists with given author"})
+        } 
+    })  
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-    let Title  = req.params.title.replace(/[:\\"]/g,'');
-    let book =  Object.values(books).filter((element)=>(
-        element["title"]===Title
-    ))
-    if(book.length>0){
-        return res.send(JSON.stringify(book))
-    }else{
-        return res.status(404).json({message: "Book doesn't exists with given title"})
-    }
-});
+        let myPromise = new Promise((resolve,reject) => {
+            try{
+                let Title  = req.params.title.replace(/[:\\"]/g,'');
+                let book =  Object.values(books).filter((element)=>(
+                    element["title"]===Title
+                ))
+                resolve(book);
+            }catch(error){
+                reject("Error occured")
+            } 
+        })
+        myPromise.then((book)=>{
+            if(book.length>0){
+                return res.send(JSON.stringify(book))
+            }else{
+                return res.status(404).json({message: "Book doesn't exists with given title"})
+            } 
+        })  
+    });
+
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
